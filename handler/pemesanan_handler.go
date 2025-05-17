@@ -23,9 +23,9 @@ func GetAllPemesanan(c *fiber.Ctx) error {
 }
 
 // GET pemesanan by email pemesan
-func GetPemesananByEmail(c *fiber.Ctx) error {
-	email := c.Params("email")
-	data, err := repository.GetPemesananByEmail(c.Context(), email)
+func GetPemesananByKode(c *fiber.Ctx) error {
+	kode := c.Params("kode")
+	data, err := repository.GetPemesananByKode(c.Context(), kode)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Data pemesanan tidak ditemukan",

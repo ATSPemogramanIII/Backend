@@ -20,19 +20,19 @@ func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (interface{
 	return result.InsertedID, nil
 }
 
-func GetPemesananByEmail(ctx context.Context, email string) ([]model.Pemesanan, error) {
+func GetPemesananByKode(ctx context.Context, kode string) ([]model.Pemesanan, error) {
 	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
-	filter := bson.M{"email": email}
+	filter := bson.M{"kode": kode}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		fmt.Println("GetPemesananByEmail - Find:", err)
+		fmt.Println("GetPemesananByKode - Find:", err)
 		return nil, err
 	}
 
 	var data []model.Pemesanan
 	if err := cursor.All(ctx, &data); err != nil {
-		fmt.Println("GetPemesananByEmail - Decode:", err)
+		fmt.Println("GetPemesananByKode - Decode:", err)
 		return nil, err
 	}
 	return data, nil
