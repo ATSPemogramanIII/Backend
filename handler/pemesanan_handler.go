@@ -22,7 +22,7 @@ func GetAllPemesanan(c *fiber.Ctx) error {
 	})
 }
 
-// GET pemesanan by email pemesan
+// GET pemesanan by kode pemesan
 func GetPemesananByKode(c *fiber.Ctx) error {
 	kode := c.Params("kode")
 	data, err := repository.GetPemesananByKode(c.Context(), kode)
@@ -36,6 +36,7 @@ func GetPemesananByKode(c *fiber.Ctx) error {
 		"data":    data,
 	})
 }
+
 
 // POST / insert pemesanan
 func InsertPemesanan(c *fiber.Ctx) error {
