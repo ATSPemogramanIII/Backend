@@ -59,20 +59,28 @@ func InsertPaketWisata(c *fiber.Ctx) error {
 		})
 	}
 
-	// Validasi ID harus diisi
+	// Validasi ID
 	if paket.ID == "" {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "ID paket wisata harus diisi",
 		})
 	}
 
-	// Validasi tanggal mulai tidak boleh di masa lalu
-	if paket.TanggalMulai.Before(time.Now().Truncate(24 * time.Hour)) {
+	// Validasi dan parsing tanggal
+	parsedDate, err := time.Parse(time.RFC3339, paket.TanggalMulai)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Format tanggal tidak valid. Gunakan format ISO 8601 (contoh: 2025-06-01T00:00:00Z)",
+		})
+	}
+
+	if parsedDate.Before(time.Now().Truncate(24 * time.Hour)) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Tanggal mulai harus hari ini atau setelahnya",
 		})
 	}
 
+	// Simpan ke database
 	insertedID, err := repository.InsertPaketWisata(c.Context(), paket)
 	if err != nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
@@ -87,23 +95,33 @@ func InsertPaketWisata(c *fiber.Ctx) error {
 	})
 }
 
+
 func UpdatePaketWisata(c *fiber.Ctx) error {
 	id := c.Params("id")
 	var paket model.PaketWisata
 
+	// Parse body ke struct PaketWisata
 	if err := c.BodyParser(&paket); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Data tidak valid",
 		})
 	}
 
-	// Validasi tanggal mulai tidak boleh di masa lalu
-	if paket.TanggalMulai.Before(time.Now().Truncate(24 * time.Hour)) {
+	// Validasi tanggal mulai (harus format ISO dan tidak boleh di masa lalu)
+	parsedDate, err := time.Parse(time.RFC3339, paket.TanggalMulai)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Format tanggal tidak valid. Gunakan format ISO 8601 (contoh: 2025-06-01T00:00:00Z)",
+		})
+	}
+
+	if parsedDate.Before(time.Now().Truncate(24 * time.Hour)) {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Tanggal mulai harus hari ini atau setelahnya",
 		})
 	}
 
+	// Lanjut update ke database
 	updatedID, err := repository.UpdatePaketWisata(c.Context(), id, paket)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -117,6 +135,7 @@ func UpdatePaketWisata(c *fiber.Ctx) error {
 		"status":  fiber.StatusOK,
 	})
 }
+
 
 func DeletePaketWisata(c *fiber.Ctx) error {
 	id := c.Params("id")

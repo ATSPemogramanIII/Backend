@@ -18,9 +18,10 @@ type PaketWisata struct {
 	Deskripsi    string      `json:"deskripsi" bson:"deskripsi"`
 	Harga        int         `json:"harga" bson:"harga"`
 	DurasiHari   int         `json:"durasi_hari" bson:"durasi_hari"`
-	TanggalMulai time.Time   `json:"tanggal_mulai" bson:"tanggal_mulai"`
+	TanggalMulai string      `json:"tanggal_mulai" bson:"tanggal_mulai"` // <-- Ubah jadi string
 	Destinasi    []Destinasi `json:"destinasi" bson:"destinasi"`
 }
+
 
 type Ulasan struct {
 	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
