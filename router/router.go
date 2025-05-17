@@ -20,7 +20,7 @@ func SetupRouters(app *fiber.App) {
 
 	// Ulasan routes
 	api.Get("/ulasan", handler.GetAllUlasan)
-	api.Get("/ulasan/:kode", handler.GetUlasanByKodePaket)
+	api.Get("/ulasan/kodepaket/:kode", handler.GetUlasanByKodePaket) // lebih spesifik
 	api.Post("/ulasan", handler.InsertUlasan)
 	api.Put("/ulasan/:id", handler.UpdateUlasan)
 	api.Delete("/ulasan/:id", handler.DeleteUlasan)
