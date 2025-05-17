@@ -9,6 +9,8 @@ import (
 func SetupRouters(app *fiber.App) {
 	api := app.Group("/api")
 
+	api.Get("/", handler.Homepage)
+	
 	// Paket wisata routes
 	api.Get("/paket", handler.GetAllPaketWisata)
 	api.Get("/paket/:kode", handler.GetPaketWisataByKode)
