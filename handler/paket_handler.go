@@ -8,6 +8,10 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
+func Homepage(c *fiber.Ctx) error {
+	return c.SendString("Welcome to the homepage!")
+}
+
 // GET all paket wisata
 func GetAllPaketWisata(c *fiber.Ctx) error {
 	data, err := repository.GetAllPaketWisata(c.Context())
