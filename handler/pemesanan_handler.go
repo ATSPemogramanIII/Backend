@@ -6,6 +6,7 @@ import (
 	"fmt"
 
 	"github.com/gofiber/fiber/v2"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 // GET all pemesanan
@@ -62,7 +63,13 @@ func InsertPemesanan(c *fiber.Ctx) error {
 
 // PUT / update pemesanan by ID
 func UpdatePemesanan(c *fiber.Ctx) error {
-	id := c.Params("id")
+	idParam := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "ID tidak valid",
+		})
+	}
 
 	var update model.Pemesanan
 	if err := c.BodyParser(&update); err != nil {
@@ -71,7 +78,7 @@ func UpdatePemesanan(c *fiber.Ctx) error {
 		})
 	}
 
-	updatedID, err := repository.UpdatePemesanan(c.Context(), id, update)
+	updatedID, err := repository.UpdatePemesanan(c.Context(), objectID, update)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": err.Error(),
@@ -87,11 +94,18 @@ func UpdatePemesanan(c *fiber.Ctx) error {
 
 // DELETE / delete pemesanan by ID
 func DeletePemesanan(c *fiber.Ctx) error {
-	id := c.Params("id")
-	deletedID, err := repository.DeletePemesanan(c.Context(), id)
+	idParam := c.Params("id")
+	objectID, err := primitive.ObjectIDFromHex(idParam)
+	if err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"message": "ID tidak valid",
+		})
+	}
+
+	deletedID, err := repository.DeletePemesanan(c.Context(), objectID)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"message": fmt.Sprintf("Pemesanan dengan ID %s tidak ditemukan: %v", id, err),
+			"message": fmt.Sprintf("Pemesanan dengan ID %s tidak ditemukan: %v", idParam, err),
 		})
 	}
 
