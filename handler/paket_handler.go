@@ -4,6 +4,7 @@ import (
 	"backendtourapp/model"
 	"backendtourapp/repository"
 	"fmt"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -50,7 +51,13 @@ func InsertPaketWisata(c *fiber.Ctx) error {
 		})
 	}
 
-	// Validasi ID unik bisa ditambahkan di repository
+	// Validasi tanggal mulai tidak boleh di masa lalu
+	if paket.TanggalMulai.Before(time.Now().Truncate(24 * time.Hour)) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Tanggal mulai harus hari ini atau setelahnya",
+		})
+	}
+
 	insertedID, err := repository.InsertPaketWisata(c.Context(), paket)
 	if err != nil {
 		return c.Status(fiber.StatusConflict).JSON(fiber.Map{
@@ -72,6 +79,13 @@ func UpdatePaketWisata(c *fiber.Ctx) error {
 	if err := c.BodyParser(&paket); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Data tidak valid",
+		})
+	}
+
+	// Validasi tanggal mulai tidak boleh di masa lalu
+	if paket.TanggalMulai.Before(time.Now().Truncate(24 * time.Hour)) {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Tanggal mulai harus hari ini atau setelahnya",
 		})
 	}
 

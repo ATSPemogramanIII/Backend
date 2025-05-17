@@ -10,6 +10,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+// Menambahkan data paket wisata
 func InsertPaketWisata(ctx context.Context, paket model.PaketWisata) (insertedID interface{}, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketWisataCollection)
 
@@ -33,11 +34,13 @@ func InsertPaketWisata(ctx context.Context, paket model.PaketWisata) (insertedID
 	return insertResult.InsertedID, nil
 }
 
+// Mengambil data berdasarkan ID
 func GetPaketWisataByID(ctx context.Context, id string) (paket *model.PaketWisata, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketWisataCollection)
 	filter := bson.M{"_id": id}
 
-	err = collection.FindOne(ctx, filter).Decode(&paket)
+	var result model.PaketWisata
+	err = collection.FindOne(ctx, filter).Decode(&result)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
@@ -45,9 +48,10 @@ func GetPaketWisataByID(ctx context.Context, id string) (paket *model.PaketWisat
 		return nil, fmt.Errorf("Gagal mengambil data paket wisata: %v", err)
 	}
 
-	return paket, nil
+	return &result, nil
 }
 
+// Mengambil semua data paket wisata
 func GetAllPaketWisata(ctx context.Context) ([]model.PaketWisata, error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketWisataCollection)
 	filter := bson.M{}
@@ -67,11 +71,21 @@ func GetAllPaketWisata(ctx context.Context) ([]model.PaketWisata, error) {
 	return data, nil
 }
 
+// Update data paket wisata berdasarkan ID
 func UpdatePaketWisata(ctx context.Context, id string, update model.PaketWisata) (updatedID string, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketWisataCollection)
 
 	filter := bson.M{"_id": id}
-	updateData := bson.M{"$set": update}
+	updateData := bson.M{
+		"$set": bson.M{
+			"nama_paket":    update.NamaPaket,
+			"deskripsi":     update.Deskripsi,
+			"harga":         update.Harga,
+			"durasi_hari":   update.DurasiHari,
+			"tanggal_mulai": update.TanggalMulai,
+			"destinasi":     update.Destinasi,
+		},
+	}
 
 	result, err := collection.UpdateOne(ctx, filter, updateData)
 	if err != nil {
@@ -85,6 +99,7 @@ func UpdatePaketWisata(ctx context.Context, id string, update model.PaketWisata)
 	return id, nil
 }
 
+// Hapus data paket wisata berdasarkan ID
 func DeletePaketWisata(ctx context.Context, id string) (deletedID string, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketWisataCollection)
 
