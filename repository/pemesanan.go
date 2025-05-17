@@ -22,7 +22,7 @@ func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (interface{
 
 func GetPemesananByKode(ctx context.Context, kode string) ([]model.Pemesanan, error) {
 	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
-	filter := bson.M{"kode": kode}
+	filter := bson.M{"kode_paket": kode}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
