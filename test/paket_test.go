@@ -18,7 +18,7 @@ func TestInsertPaketWisata(t *testing.T) {
 		Deskripsi:    "Deskripsi untuk pengujian",
 		Harga:        999999,
 		DurasiHari:   4,
-		TanggalMulai: time.Now().Add(24 * time.Hour),
+		TanggalMulai: time.Now().Add(24 * time.Hour).Format(time.RFC3339),
 		Destinasi: []model.Destinasi{
 			{
 				Nama:      "Gunung Testing",
@@ -67,7 +67,7 @@ func TestUpdatePaketWisata(t *testing.T) {
 		Deskripsi:    "Deskripsi telah diperbarui",
 		Harga:        888888,
 		DurasiHari:   5,
-		TanggalMulai: time.Now().Add(48 * time.Hour),
+		TanggalMulai: time.Now().Add(48 * time.Hour).Format(time.RFC3339),
 		Destinasi: []model.Destinasi{
 			{
 				Nama:      "Pantai Uji Update",
