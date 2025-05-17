@@ -1,6 +1,10 @@
 package model
 
-import "time"
+import (
+	"time"
+
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Destinasi struct {
 	Nama      string `json:"nama" bson:"nama"`
@@ -19,21 +23,21 @@ type PaketWisata struct {
 }
 
 type Ulasan struct {
-	ID           string    `json:"_id" bson:"_id"`
-	IDPaket      string    `json:"id_paket" bson:"id_paket"` // Referensi ke PaketWisata
-	NamaPengguna string    `json:"nama_pengguna" bson:"nama_pengguna"`
-	Rating       int       `json:"rating" bson:"rating"`     // Rating 1–5
-	Komentar     string    `json:"komentar" bson:"komentar"`
-	Tanggal      time.Time `json:"tanggal" bson:"tanggal"`   // Format: waktu asli
+	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	IDPaket      string             `json:"id_paket" bson:"id_paket"` // tetap string, referensi ke PaketWisata.ID
+	NamaPengguna string             `json:"nama_pengguna" bson:"nama_pengguna"`
+	Rating       int                `json:"rating" bson:"rating"` // 1-5
+	Komentar     string             `json:"komentar" bson:"komentar"`
+	Tanggal      time.Time          `json:"tanggal" bson:"tanggal"`
 }
 
 type Pemesanan struct {
-	ID            string    `json:"_id" bson:"_id"`
-	NamaPemesan   string    `json:"nama_pemesan" bson:"nama_pemesan"`
-	Email         string    `json:"email" bson:"email"`
-	NomorTelepon  string    `json:"nomor_telepon" bson:"nomor_telepon"`
-	IDPaket       string    `json:"id_paket" bson:"id_paket"`               // Referensi ke PaketWisata
-	JumlahOrang   int       `json:"jumlah_orang" bson:"jumlah_orang"`       // Min 1
-	TanggalPesan  time.Time `json:"tanggal_pesan" bson:"tanggal_pesan"`     // Format waktu asli
-	Status        string    `json:"status" bson:"status"`                   // ex: pending, confirmed, cancelled
+	ID           primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	NamaPemesan  string             `json:"nama_pemesan" bson:"nama_pemesan"`
+	Email        string             `json:"email" bson:"email"`
+	NomorTelepon string             `json:"nomor_telepon" bson:"nomor_telepon"`
+	IDPaket      string             `json:"id_paket" bson:"id_paket"`
+	JumlahOrang  int                `json:"jumlah_orang" bson:"jumlah_orang"`
+	TanggalPesan time.Time          `json:"tanggal_pesan" bson:"tanggal_pesan"`
+	Status       string             `json:"status" bson:"status"` // pending, confirmed, cancelled
 }

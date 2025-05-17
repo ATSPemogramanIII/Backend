@@ -7,10 +7,11 @@ import (
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (insertedID interface{}, err error) {
+func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (insertedID primitive.ObjectID, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
 
 	// Optional: cek duplikasi jika mau
@@ -22,22 +23,23 @@ func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (insertedID
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
 		fmt.Printf("InsertPemesanan - Count: %v\n", err)
-		return nil, err
+		return primitive.NilObjectID, err
 	}
 	if count > 0 {
-		return nil, fmt.Errorf("Pemesanan untuk paket %v oleh %v pada tanggal %v sudah ada", pemesanan.IDPaket, pemesanan.NamaPemesan, pemesanan.TanggalPesan)
+		return primitive.NilObjectID, fmt.Errorf("Pemesanan untuk paket %v oleh %v pada tanggal %v sudah ada", pemesanan.IDPaket, pemesanan.NamaPemesan, pemesanan.TanggalPesan)
 	}
 
 	insertResult, err := collection.InsertOne(ctx, pemesanan)
 	if err != nil {
 		fmt.Printf("InsertPemesanan - Insert: %v\n", err)
-		return nil, err
+		return primitive.NilObjectID, err
 	}
 
-	return insertResult.InsertedID, nil
+	id := insertResult.InsertedID.(primitive.ObjectID)
+	return id, nil
 }
 
-func GetPemesananByID(ctx context.Context, id string) (pemesanan *model.Pemesanan, err error) {
+func GetPemesananByID(ctx context.Context, id primitive.ObjectID) (pemesanan *model.Pemesanan, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
 	filter := bson.M{"_id": id}
 
@@ -71,7 +73,7 @@ func GetAllPemesanan(ctx context.Context) ([]model.Pemesanan, error) {
 	return data, nil
 }
 
-func UpdatePemesanan(ctx context.Context, id string, update model.Pemesanan) (updatedID string, err error) {
+func UpdatePemesanan(ctx context.Context, id primitive.ObjectID, update model.Pemesanan) (updatedID primitive.ObjectID, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
 
 	filter := bson.M{"_id": id}
@@ -80,26 +82,26 @@ func UpdatePemesanan(ctx context.Context, id string, update model.Pemesanan) (up
 	result, err := collection.UpdateOne(ctx, filter, updateData)
 	if err != nil {
 		fmt.Printf("UpdatePemesanan: %v\n", err)
-		return "", err
+		return primitive.NilObjectID, err
 	}
 	if result.ModifiedCount == 0 {
-		return "", fmt.Errorf("Tidak ada data yang diupdate untuk ID %v", id)
+		return primitive.NilObjectID, fmt.Errorf("Tidak ada data yang diupdate untuk ID %v", id.Hex())
 	}
 
 	return id, nil
 }
 
-func DeletePemesanan(ctx context.Context, id string) (deletedID string, err error) {
+func DeletePemesanan(ctx context.Context, id primitive.ObjectID) (deletedID primitive.ObjectID, err error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
 
 	filter := bson.M{"_id": id}
 	result, err := collection.DeleteOne(ctx, filter)
 	if err != nil {
 		fmt.Printf("DeletePemesanan: %v\n", err)
-		return "", err
+		return primitive.NilObjectID, err
 	}
 	if result.DeletedCount == 0 {
-		return "", fmt.Errorf("Tidak ada data yang dihapus untuk ID %v", id)
+		return primitive.NilObjectID, fmt.Errorf("Tidak ada data yang dihapus untuk ID %v", id.Hex())
 	}
 
 	return id, nil
