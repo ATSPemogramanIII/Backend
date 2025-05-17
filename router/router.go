@@ -7,13 +7,13 @@ import (
 )
 
 func SetupRouters(app *fiber.App) {
-	api := app.Group("/paket")
+	api := app.Group("/tour")
 
 	api.Get("/", handler.GetAllPaketWisata)
-	api.Get("/:id", handler.GetPaketWisataByID)        
-	api.Post("/", handler.InsertPaketWisata)        
-	api.Put("/:id", handler.UpdatePaketWisata)         
-	api.Delete("/:id", handler.DeletePaketWisata) 
+	api.Get("/paket:id", handler.GetPaketWisataByID)        
+	api.Post("/paket", handler.InsertPaketWisata)        
+	api.Put("/paket:id", handler.UpdatePaketWisata)         
+	api.Delete("/paket:id", handler.DeletePaketWisata) 
 
 	//Ulasan
 	api.Get("/ulasan", handler.GetAllUlasan)
