@@ -7,9 +7,10 @@ import (
 )
 
 func SetupRouters(app *fiber.App) {
-	api := app.Group("/api")
+	api := app.Group("/paket")
 
-	api.Get("/", handler.Homepage)
+	// api.Get("/", handler.Homepage)
+	api.Get("/", handler.GetAllPaket)
 	api.Get("/mahasiswa", handler.GetAllMahasiswa)
 	api.Get("/mahasiswa/:npm", handler.GetMahasiswaByNPM)
 	api.Post("/mahasiswa", handler.InsertMahasiswa)
