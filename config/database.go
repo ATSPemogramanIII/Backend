@@ -11,9 +11,9 @@ import (
 
 const (
 	DBName             = "tour"
-	PaketWisataCollection = "paket_wisata"
-	UlasanCollection      = "ulasan"
-	PemesananCollection   = "pemesanan"
+	paket_wisata = "paket_wisata"
+	ulasan      = "ulasan"
+	pemesanan   = "pemesanan"
 )
 
 var MongoString string = os.Getenv("MONGODBSTRING")

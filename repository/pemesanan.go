@@ -7,102 +7,93 @@ import (
 	"fmt"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 )
 
-func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (insertedID primitive.ObjectID, err error) {
-	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
+func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (interface{}, error) {
+	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
 
-	// Optional: cek duplikasi jika mau
-	filter := bson.M{
-		"id_paket":      pemesanan.IDPaket,
-		"nama_pemesan":  pemesanan.NamaPemesan,
-		"tanggal_pesan": pemesanan.TanggalPesan,
-	}
-	count, err := collection.CountDocuments(ctx, filter)
-	if err != nil {
-		fmt.Printf("InsertPemesanan - Count: %v\n", err)
-		return primitive.NilObjectID, err
-	}
-	if count > 0 {
-		return primitive.NilObjectID, fmt.Errorf("Pemesanan untuk paket %v oleh %v pada tanggal %v sudah ada", pemesanan.IDPaket, pemesanan.NamaPemesan, pemesanan.TanggalPesan)
-	}
-
-	insertResult, err := collection.InsertOne(ctx, pemesanan)
+	result, err := collection.InsertOne(ctx, pemesanan)
 	if err != nil {
 		fmt.Printf("InsertPemesanan - Insert: %v\n", err)
-		return primitive.NilObjectID, err
+		return nil, err
 	}
-
-	id := insertResult.InsertedID.(primitive.ObjectID)
-	return id, nil
+	return result.InsertedID, nil
 }
 
-func GetPemesananByID(ctx context.Context, id primitive.ObjectID) (pemesanan *model.Pemesanan, err error) {
-	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
-	filter := bson.M{"_id": id}
-
-	err = collection.FindOne(ctx, filter).Decode(&pemesanan)
-	if err != nil {
-		if err == mongo.ErrNoDocuments {
-			return nil, nil
-		}
-		return nil, fmt.Errorf("Gagal mengambil data pemesanan: %v", err)
-	}
-
-	return pemesanan, nil
-}
-
-func GetAllPemesanan(ctx context.Context) ([]model.Pemesanan, error) {
-	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
-	filter := bson.M{}
+func GetPemesananByEmail(ctx context.Context, email string) ([]model.Pemesanan, error) {
+	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
+	filter := bson.M{"email": email}
 
 	cursor, err := collection.Find(ctx, filter)
 	if err != nil {
-		fmt.Println("GetAllPemesanan (Find):", err)
+		fmt.Println("GetPemesananByEmail - Find:", err)
 		return nil, err
 	}
 
 	var data []model.Pemesanan
 	if err := cursor.All(ctx, &data); err != nil {
-		fmt.Println("GetAllPemesanan (Decode):", err)
+		fmt.Println("GetPemesananByEmail - Decode:", err)
 		return nil, err
 	}
-
 	return data, nil
 }
 
-func UpdatePemesanan(ctx context.Context, id primitive.ObjectID, update model.Pemesanan) (updatedID primitive.ObjectID, err error) {
-	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
+func GetAllPemesanan(ctx context.Context) ([]model.Pemesanan, error) {
+	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
 
-	filter := bson.M{"_id": id}
-	updateData := bson.M{"$set": update}
-
-	result, err := collection.UpdateOne(ctx, filter, updateData)
+	cursor, err := collection.Find(ctx, bson.M{})
 	if err != nil {
-		fmt.Printf("UpdatePemesanan: %v\n", err)
-		return primitive.NilObjectID, err
-	}
-	if result.ModifiedCount == 0 {
-		return primitive.NilObjectID, fmt.Errorf("Tidak ada data yang diupdate untuk ID %v", id.Hex())
+		fmt.Println("GetAllPemesanan - Find:", err)
+		return nil, err
 	}
 
+	var data []model.Pemesanan
+	if err := cursor.All(ctx, &data); err != nil {
+		fmt.Println("GetAllPemesanan - Decode:", err)
+		return nil, err
+	}
+	return data, nil
+}
+
+func UpdatePemesanan(ctx context.Context, id interface{}, pemesanan model.Pemesanan) (interface{}, error) {
+	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
+	filter := bson.M{"_id": id}
+
+	// Jangan update _id agar tidak error, jadi buat update tanpa _id
+	updateData := bson.M{
+		"nama_pemesan":  pemesanan.NamaPemesan,
+		"email":         pemesanan.Email,
+		"nomor_telepon": pemesanan.NomorTelepon,
+		"kode_paket":    pemesanan.KodePaket,
+		"jumlah_orang":  pemesanan.JumlahOrang,
+		"tanggal_pesan": pemesanan.TanggalPesan,
+		"status":        pemesanan.Status,
+	}
+
+	update := bson.M{"$set": updateData}
+
+	result, err := collection.UpdateOne(ctx, filter, update)
+	if err != nil {
+		return nil, err
+	}
+	if result.MatchedCount == 0 {
+		return nil, fmt.Errorf("pemesanan dengan ID tersebut tidak ditemukan")
+	}
 	return id, nil
 }
 
-func DeletePemesanan(ctx context.Context, id primitive.ObjectID) (deletedID primitive.ObjectID, err error) {
-	collection := config.MongoConnect(config.DBName).Collection(config.PemesananCollection)
 
+func DeletePemesanan(ctx context.Context, id interface{}) (interface{}, error) {
+	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
 	filter := bson.M{"_id": id}
+
 	result, err := collection.DeleteOne(ctx, filter)
 	if err != nil {
 		fmt.Printf("DeletePemesanan: %v\n", err)
-		return primitive.NilObjectID, err
+		return nil, err
 	}
 	if result.DeletedCount == 0 {
-		return primitive.NilObjectID, fmt.Errorf("Tidak ada data yang dihapus untuk ID %v", id.Hex())
+		return nil, fmt.Errorf("pemesanan dengan ID tersebut tidak ditemukan")
 	}
-
 	return id, nil
 }
