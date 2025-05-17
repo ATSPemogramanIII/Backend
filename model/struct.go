@@ -1,7 +1,5 @@
 package model
 
-import "go.mongodb.org/mongo-driver/bson/primitive"
-
 
 type Destinasi struct {
     Nama      string `json:"nama" bson:"nama"`
@@ -38,26 +36,4 @@ type Pemesanan struct {
 	JumlahOrang   int    `json:"jumlah_orang" bson:"jumlah_orang"`       // Min 1
 	TanggalPesan  string `json:"tanggal_pesan" bson:"tanggal_pesan"`     // Format: YYYY-MM-DD
 	Status        string `json:"status" bson:"status"`                   // ex: pending, confirmed, cancelled
-}
-type Mahasiswa struct {
-	ID         primitive.ObjectID `bson:"_id,omitempty" json:"_id"`
-	Nama       string             `bson:"nama" json:"nama"`
-	NPM        int             	  `bson:"npm" json:"npm"`
-	Prodi      string             `bson:"prodi" json:"prodi"`
-	Fakultas   string             `bson:"fakultas" json:"fakultas"`
-	Alamat     Alamat             `bson:"alamat" json:"alamat"`
-	Minat      []string           `bson:"minat" json:"minat"`
-	MataKuliah []MataKuliah       `bson:"mata_kuliah" json:"mata_kuliah"`
-}
-
-type Alamat struct {
-	Jalan     string `bson:"jalan" json:"jalan"`
-	Kelurahan string `bson:"kelurahan" json:"kelurahan"`
-	Kota      string `bson:"kota" json:"kota"`
-}
-
-type MataKuliah struct {
-	Kode  string `bson:"kode" json:"kode"`
-	Nama  string `bson:"nama" json:"nama"`
-	Nilai int    `bson:"nilai" json:"nilai"`
 }
