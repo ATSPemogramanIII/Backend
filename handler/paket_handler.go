@@ -29,6 +29,14 @@ func GetPaketWisataByID(c *fiber.Ctx) error {
 
 	paket, err := repository.GetPaketWisataByID(c.Context(), id)
 	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"message": fmt.Sprintf("Gagal mengambil data: %v", err),
+			"status":  fiber.StatusInternalServerError,
+		})
+	}
+
+	// Tambahan pengecekan kalau data tidak ditemukan (paket == nil)
+	if paket == nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"message": "Paket wisata tidak ditemukan",
 			"status":  fiber.StatusNotFound,
@@ -48,6 +56,13 @@ func InsertPaketWisata(c *fiber.Ctx) error {
 	if err := c.BodyParser(&paket); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "Data tidak valid",
+		})
+	}
+
+	// Validasi ID harus diisi
+	if paket.ID == "" {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "ID paket wisata harus diisi",
 		})
 	}
 
