@@ -9,11 +9,23 @@ import (
 func SetupRouters(app *fiber.App) {
 	api := app.Group("/paket")
 
-	// api.Get("/", handler.Homepage)
 	api.Get("/", handler.GetAllPaketWisata)
-	// api.Get("/mahasiswa", handler.GetAllMahasiswa)
-	// api.Get("/mahasiswa/:npm", handler.GetMahasiswaByNPM)
-	// api.Post("/mahasiswa", handler.InsertMahasiswa)
-	// api.Put("/mahasiswa/:npm", handler.UpdateMahasiswa)
-	// api.Delete("/mahasiswa/:npm", handler.DeleteMahasiswa)
+	api.Get("/:id", handler.GetPaketWisataByID)        
+	api.Post("/", handler.InsertPaketWisata)        
+	api.Put("/:id", handler.UpdatePaketWisata)         
+	api.Delete("/:id", handler.DeletePaketWisata) 
+
+	//Ulasan
+	api.Get("/ulasan", handler.GetAllUlasan)
+	api.Get("/ulasan:id", handler.GetUlasanByID)        
+	api.Post("/ulasan", handler.InsertUlasan)        
+	api.Put("/ulasan:id", handler.UpdateUlasan)         
+	api.Delete("/ulasan:id", handler.DeleteUlasan)
+
+	//Pemesanan
+	api.Get("/pemesanan", handler.GetAllPemesanan)
+	api.Get("/pemesanan:id", handler.GetPemesananByID)        
+	api.Post("/pemesanan", handler.InsertPemesanan)        
+	api.Put("/pemesanan:id", handler.UpdatePemesanan)         
+	api.Delete("/pemesanan:id", handler.DeletePemesanan) 
 }
