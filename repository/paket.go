@@ -9,7 +9,7 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 )
 
-func GetAllPaket(ctx context.Context) ([]model.PaketWisata, error) {
+func GetAllPaketWisata(ctx context.Context) ([]model.PaketWisata, error) {
 	collection := config.MongoConnect(config.DBName).Collection(config.PaketCollection)
 	filter := bson.M{}
 
