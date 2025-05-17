@@ -9,10 +9,13 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-var DBName = "tour"
-var PaketCollection = "paket_wisata"
-var PemesananCollection = "pemesanan"
-var UlasanCollection = "ulasan"
+const (
+	DBName             = "tour"
+	PaketWisataCollection = "paket_wisata"
+	UlasanCollection      = "ulasan"
+	PemesananCollection   = "pemesanan"
+)
+
 var MongoString string = os.Getenv("MONGODBSTRING")
 
 func MongoConnect(dbname string) (db *mongo.Database) {
