@@ -18,6 +18,8 @@ api.Post("/destinasi", handler.InsertDestinasi)
 api.Put("/destinasi/:id", handler.UpdateDestinasi)
 api.Delete("/destinasi/:id", handler.DeleteDestinasi)
 
+api.Get("/paket/destinasi", handler.GetPaketWithDestinasi)
+
 	// Paket wisata routes
 	api.Get("/paket", handler.GetAllPaketWisata)
 	api.Get("/paket/:kode", handler.GetPaketWisataByKode)

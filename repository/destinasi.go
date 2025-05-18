@@ -11,6 +11,18 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func GetDestinasiByKode(ctx context.Context, kode string) (*model.Destinasi, error) {
+    collection := config.MongoConnect(config.DBName).Collection("destinasi")
+    
+    var destinasi model.Destinasi
+    err := collection.FindOne(ctx, bson.M{"kode_destinasi": kode}).Decode(&destinasi)
+    if err != nil {
+        return nil, err
+    }
+
+    return &destinasi, nil
+}
+
 func InsertDestinasi(ctx context.Context, destinasi model.Destinasi) (interface{}, error) {
 	collection := config.MongoConnect(config.DBName).Collection("destinasi")
 
@@ -85,6 +97,7 @@ func UpdateDestinasi(ctx context.Context, id string, update model.Destinasi) (st
 
 	// Jangan update _id agar tidak error
 	updateData := bson.M{
+		"kode_destinasi": update.KodeDestinasi,
 		"nama":      update.Nama,
 		"lokasi":    update.Lokasi,
 		"deskripsi": update.Deskripsi,

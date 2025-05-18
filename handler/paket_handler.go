@@ -3,7 +3,9 @@ package handler
 import (
 	"backendtourapp/model"
 	"backendtourapp/repository"
+	"context"
 	"fmt"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -40,6 +42,22 @@ func GetPaketWisataByKode(c *fiber.Ctx) error {
 		"data":    data,
 	})
 }
+
+func GetPaketWithDestinasi(c *fiber.Ctx) error {
+    ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+    defer cancel()
+
+    results, err := repository.GetAllPaketWithDestinasi(ctx)
+    if err != nil {
+        return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+            "error": err.Error(),
+        })
+    }
+
+    return c.JSON(results)
+}
+
+
 
 // POST / insert data
 func InsertPaketWisata(c *fiber.Ctx) error {

@@ -7,21 +7,28 @@ import (
 )
 
 type Destinasi struct {
-    ID        primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
-    Nama      string             `json:"nama" bson:"nama"`
-    Lokasi    string             `json:"lokasi" bson:"lokasi"`
-    Deskripsi string             `json:"deskripsi" bson:"deskripsi"`
+    ID             primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+    KodeDestinasi  string             `json:"kode_destinasi" bson:"kode_destinasi"`
+    Nama           string             `json:"nama" bson:"nama"`
+    Lokasi         string             `json:"lokasi" bson:"lokasi"`
+    Deskripsi      string             `json:"deskripsi" bson:"deskripsi"`
 }
 
+
 type PaketWisata struct {
-    ID         primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-    KodePaket  string             `json:"kode_paket" bson:"kode_paket"` // misal "PW001"
-    NamaPaket  string             `json:"nama_paket" bson:"nama_paket"`
-    Deskripsi  string             `json:"deskripsi" bson:"deskripsi"`
-    Harga      int                `json:"harga" bson:"harga"`
-    DurasiHari int                `json:"durasi_hari" bson:"durasi_hari"`
-    TanggalMulai string           `json:"tanggal_mulai" bson:"tanggal_mulai"`
-    DestinasiIDs []primitive.ObjectID `json:"destinasi_ids" bson:"destinasi_ids"`
+    ID            primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+    KodePaket     string             `json:"kode_paket" bson:"kode_paket"`
+    NamaPaket     string             `json:"nama_paket" bson:"nama_paket"`
+    Deskripsi     string             `json:"deskripsi" bson:"deskripsi"`
+    Harga         int                `json:"harga" bson:"harga"`
+    DurasiHari    int                `json:"durasi_hari" bson:"durasi_hari"`
+    TanggalMulai  string             `json:"tanggal_mulai" bson:"tanggal_mulai"`
+    KodeDestinasi []string           `json:"kode_destinasi" bson:"kode_destinasi"` // list kode
+}
+
+type PaketWisataWithDestinasi struct {
+    PaketWisata
+    Destinasi []Destinasi `json:"destinasi"`
 }
 
 type Ulasan struct {

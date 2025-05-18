@@ -40,7 +40,7 @@ func GetPaketWisataByKode(ctx context.Context, kode string) (*model.PaketWisata,
 	err := collection.FindOne(ctx, filter).Decode(&paket)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
-			return nil, nil
+			return nil, fmt.Errorf("data dengan kode %s tidak ditemukan", kode)
 		}
 		return nil, fmt.Errorf("GetPaketByKode error: %v", err)
 	}
@@ -63,6 +63,44 @@ func GetAllPaketWisata(ctx context.Context) ([]model.PaketWisata, error) {
 
 	return data, nil
 }
+
+func GetAllPaketWithDestinasi(ctx context.Context) ([]model.PaketWisataWithDestinasi, error) {
+    paketCollection := config.MongoConnect(config.DBName).Collection("paket_wisata")
+    destinasiCollection := config.MongoConnect(config.DBName).Collection("destinasi")
+
+    var pakets []model.PaketWisata
+    cursor, err := paketCollection.Find(ctx, bson.M{})
+    if err != nil {
+        return nil, err
+    }
+    if err := cursor.All(ctx, &pakets); err != nil {
+        return nil, err
+    }
+
+    var result []model.PaketWisataWithDestinasi
+    for _, p := range pakets {
+        // Ambil destinasi berdasarkan kode
+        filter := bson.M{"kode_destinasi": bson.M{"$in": p.KodeDestinasi}}
+        destCursor, err := destinasiCollection.Find(ctx, filter)
+        if err != nil {
+            return nil, err
+        }
+
+        var destList []model.Destinasi
+        if err := destCursor.All(ctx, &destList); err != nil {
+            return nil, err
+        }
+
+        result = append(result, model.PaketWisataWithDestinasi{
+            PaketWisata: p,
+            Destinasi:   destList,
+        })
+    }
+
+    return result, nil
+}
+
+
 
 func UpdatePaketWisata(ctx context.Context, kode string, update model.PaketWisata) (string, error) {
 	collection := config.MongoConnect(config.DBName).Collection("paket_wisata")
