@@ -13,6 +13,7 @@ func SetupRouters(app *fiber.App) {
 
 	// Destinasi routes
 api.Get("/destinasi", handler.GetAllDestinasi)
+api.Get("/destinasi/:kode", handler.GetDestinasiByKode)
 api.Get("/destinasi/:id", handler.GetDestinasiByID)
 api.Post("/destinasi", handler.InsertDestinasi)
 api.Put("/destinasi/:id", handler.UpdateDestinasi)

@@ -9,12 +9,12 @@ import (
 )
 
 func GetDestinasiByKode(c *fiber.Ctx) error {
-    kode := c.Params("id")
+    kode := c.Params("kode")
 
     destinasi, err := repository.GetDestinasiByKode(c.Context(), kode)
     if err != nil {
         return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-            "message": fmt.Sprintf("Destinasi dengan ID %s tidak ditemukan", kode),
+            "message": fmt.Sprintf("Destinasi dengan Kode %s tidak ditemukan", kode),
         })
     }
 
