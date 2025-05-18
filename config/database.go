@@ -11,6 +11,7 @@ import (
 
 const (
 	DBName             = "tour"
+	destinasi = "destinasi"
 	paket_wisata = "paket_wisata"
 	ulasan      = "ulasan"
 	pemesanan   = "pemesanan"

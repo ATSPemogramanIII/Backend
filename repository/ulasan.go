@@ -76,6 +76,9 @@ func UpdateUlasan(ctx context.Context, idStr string, updatedData model.Ulasan) (
 	if result.MatchedCount == 0 {
 		return nil, fmt.Errorf("ulasan dengan ID tersebut tidak ditemukan")
 	}
+	if updatedData.Rating < 1 || updatedData.Rating > 5 {
+		return nil, fmt.Errorf("rating harus antara 1 sampai 5")
+	}
 	return id.Hex(), nil
 }
 

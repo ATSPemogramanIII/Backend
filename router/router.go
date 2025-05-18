@@ -11,6 +11,13 @@ func SetupRouters(app *fiber.App) {
 
 	api.Get("/", handler.Homepage)
 
+	// Destinasi routes
+api.Get("/destinasi", handler.GetAllDestinasi)
+api.Get("/destinasi/:id", handler.GetDestinasiByID)
+api.Post("/destinasi", handler.InsertDestinasi)
+api.Put("/destinasi/:id", handler.UpdateDestinasi)
+api.Delete("/destinasi/:id", handler.DeleteDestinasi)
+
 	// Paket wisata routes
 	api.Get("/paket", handler.GetAllPaketWisata)
 	api.Get("/paket/:kode", handler.GetPaketWisataByKode)

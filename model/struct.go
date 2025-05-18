@@ -7,9 +7,10 @@ import (
 )
 
 type Destinasi struct {
-	Nama      string `json:"nama" bson:"nama"`
-	Lokasi    string `json:"lokasi" bson:"lokasi"`
-	Deskripsi string `json:"deskripsi" bson:"deskripsi"`
+    ID        primitive.ObjectID `json:"id,omitempty" bson:"_id,omitempty"`
+    Nama      string             `json:"nama" bson:"nama"`
+    Lokasi    string             `json:"lokasi" bson:"lokasi"`
+    Deskripsi string             `json:"deskripsi" bson:"deskripsi"`
 }
 
 type PaketWisata struct {
@@ -20,7 +21,7 @@ type PaketWisata struct {
     Harga      int                `json:"harga" bson:"harga"`
     DurasiHari int                `json:"durasi_hari" bson:"durasi_hari"`
     TanggalMulai string           `json:"tanggal_mulai" bson:"tanggal_mulai"`
-    Destinasi  []Destinasi        `json:"destinasi" bson:"destinasi"`
+    DestinasiIDs []primitive.ObjectID `json:"destinasi_ids" bson:"destinasi_ids"`
 }
 
 type Ulasan struct {

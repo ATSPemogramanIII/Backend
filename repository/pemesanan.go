@@ -5,6 +5,8 @@ import (
 	"backendtourapp/model"
 	"context"
 	"fmt"
+	"log"
+	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
 )
@@ -12,11 +14,36 @@ import (
 func InsertPemesanan(ctx context.Context, pemesanan model.Pemesanan) (interface{}, error) {
 	collection := config.MongoConnect(config.DBName).Collection("pemesanan")
 
+	// Validasi field wajib
+	if pemesanan.NamaPemesan == "" || pemesanan.Email == "" || pemesanan.KodePaket == "" {
+		return nil, fmt.Errorf("nama pemesan, email, dan kode paket tidak boleh kosong")
+	}
+	if pemesanan.JumlahOrang <= 0 {
+		return nil, fmt.Errorf("jumlah orang harus lebih dari 0")
+	}
+
+	// Set tanggal pesan jika belum diset
+	if pemesanan.TanggalPesan.IsZero() {
+		pemesanan.TanggalPesan = time.Now()
+	}
+
+	// Validasi status
+	validStatus := map[string]bool{
+		"pending":    true,
+		"dikonfirmasi":    true,
+		"dibatalkan": true,
+	}
+	if _, ok := validStatus[pemesanan.Status]; !ok {
+		return nil, fmt.Errorf("status pemesanan tidak valid: gunakan 'pending', 'dikonfirmasi', atau 'dibatalkan'")
+	}
+
+	// Insert ke database
 	result, err := collection.InsertOne(ctx, pemesanan)
 	if err != nil {
-		fmt.Printf("InsertPemesanan - Insert: %v\n", err)
+		log.Printf("InsertPemesanan - Insert error: %v\n", err)
 		return nil, err
 	}
+
 	return result.InsertedID, nil
 }
 
