@@ -26,7 +26,7 @@ func GetDestinasiByKode(ctx context.Context, kode string) (*model.Destinasi, err
 func InsertDestinasi(ctx context.Context, destinasi model.Destinasi) (interface{}, error) {
 	collection := config.MongoConnect(config.DBName).Collection("destinasi")
 
-	// Cek apakah destinasi dengan nama sama sudah ada (optional, bisa dihapus kalau tidak perlu)
+	// Cek apakah destinasi dengan nama sama sudah ada 
 	filter := bson.M{"nama": destinasi.Nama}
 	count, err := collection.CountDocuments(ctx, filter)
 	if err != nil {
