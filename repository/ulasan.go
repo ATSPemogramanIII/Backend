@@ -56,7 +56,7 @@ func GetAllUlasan(ctx context.Context) ([]model.Ulasan, error) {
 	return data, nil
 }
 
-// --- Perbaikan: ubah parameter id string ke ObjectID ---
+
 func UpdateUlasan(ctx context.Context, idStr string, updatedData model.Ulasan) (interface{}, error) {
 	collection := config.MongoConnect(config.DBName).Collection("ulasan")
 
